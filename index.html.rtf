@@ -1,0 +1,311 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="es">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\
+    <title>Party Game App</title>\
+    <style>\
+        /* --- ESTILOS VISUALES (CSS) --- */\
+        :root \{\
+            --bg-color: #121212;\
+            --card-bg: #1e1e1e;\
+            --text-color: #ffffff;\
+            --cat1: #ff4757; /* Rojo */\
+            --cat2: #2ed573; /* Verde */\
+            --cat3: #ffa502; /* Naranja */\
+            --cat4: #3742fa; /* Azul */\
+        \}\
+\
+        body \{\
+            margin: 0;\
+            padding: 0;\
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;\
+            background-color: var(--bg-color);\
+            color: var(--text-color);\
+            display: flex;\
+            flex-direction: column;\
+            align-items: center;\
+            height: 100vh;\
+            overflow: hidden;\
+        \}\
+\
+        /* Pantallas */\
+        .screen \{\
+            width: 100%;\
+            height: 100%;\
+            display: flex;\
+            flex-direction: column;\
+            justify-content: center;\
+            align-items: center;\
+            position: absolute;\
+            transition: transform 0.3s ease-in-out;\
+        \}\
+\
+        .hide \{ transform: translateX(100%); \}\
+        .active \{ transform: translateX(0); \}\
+\
+        /* Men\'fa Principal */\
+        h1 \{ margin-bottom: 30px; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; \}\
+        \
+        .menu-grid \{\
+            display: grid;\
+            grid-template-columns: 1fr 1fr;\
+            gap: 15px;\
+            width: 90%;\
+            max-width: 400px;\
+        \}\
+\
+        .menu-btn \{\
+            height: 120px;\
+            border: none;\
+            border-radius: 20px;\
+            font-size: 1.2rem;\
+            font-weight: bold;\
+            color: white;\
+            cursor: pointer;\
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);\
+            transition: transform 0.1s;\
+            display: flex;\
+            flex-direction: column;\
+            justify-content: center;\
+            align-items: center;\
+            padding: 10px;\
+        \}\
+\
+        .menu-btn:active \{ transform: scale(0.95); \}\
+        .menu-btn span \{ font-size: 2rem; margin-bottom: 5px; \}\
+\
+        /* Botones de Categor\'eda */\
+        .btn-senala \{ background: var(--cat1); \}\
+        .btn-rapido \{ background: var(--cat2); \}\
+        .btn-elige \{ background: var(--cat3); \}\
+        .btn-probable \{ background: var(--cat4); \}\
+\
+        /* Pantalla de Juego */\
+        .game-header \{\
+            position: absolute;\
+            top: 20px;\
+            left: 20px;\
+            z-index: 10;\
+        \}\
+\
+        .back-btn \{\
+            background: rgba(255,255,255,0.2);\
+            border: none;\
+            color: white;\
+            padding: 10px 20px;\
+            border-radius: 20px;\
+            font-size: 1rem;\
+            cursor: pointer;\
+        \}\
+\
+        .card-container \{\
+            width: 85%;\
+            max-width: 400px;\
+            height: 60%;\
+            perspective: 1000px;\
+        \}\
+\
+        .card \{\
+            width: 100%;\
+            height: 100%;\
+            background: var(--card-bg);\
+            border-radius: 25px;\
+            display: flex;\
+            flex-direction: column;\
+            justify-content: center;\
+            align-items: center;\
+            padding: 20px;\
+            box-sizing: border-box;\
+            text-align: center;\
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);\
+            border: 2px solid rgba(255,255,255,0.1);\
+            position: relative;\
+        \}\
+\
+        .card-category \{\
+            text-transform: uppercase;\
+            font-size: 0.9rem;\
+            opacity: 0.6;\
+            margin-bottom: 20px;\
+            letter-spacing: 1px;\
+        \}\
+\
+        .card-text \{\
+            font-size: 2rem;\
+            line-height: 1.4;\
+        \}\
+\
+        /* Estilo especial para "Elige" */\
+        .option-a \{ color: var(--cat3); \}\
+        .vs \{ font-size: 0.8rem; margin: 10px 0; opacity: 0.5; \}\
+        .option-b \{ color: white; \}\
+\
+        /* Bot\'f3n Siguiente */\
+        .next-btn \{\
+            margin-top: 40px;\
+            padding: 15px 50px;\
+            border-radius: 50px;\
+            border: none;\
+            background: white;\
+            color: black;\
+            font-size: 1.2rem;\
+            font-weight: bold;\
+            cursor: pointer;\
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);\
+        \}\
+        \
+        .next-btn:active \{ background: #ddd; \}\
+\
+    </style>\
+</head>\
+<body>\
+\
+    <div id="menu-screen" class="screen active">\
+        <h1>PARTY APP</h1>\
+        <div class="menu-grid">\
+            <button class="menu-btn btn-senala" onclick="startGame('senala')">\
+                <span>\uc0\u55357 \u56391 </span>Se\'f1ala\
+            </button>\
+            <button class="menu-btn btn-rapido" onclick="startGame('rapido')">\
+                <span>\uc0\u9201 \u65039 </span>El R\'e1pido\
+            </button>\
+            <button class="menu-btn btn-elige" onclick="startGame('elige')">\
+                <span>\uc0\u9878 \u65039 </span>Elige\
+            </button>\
+            <button class="menu-btn btn-probable" onclick="startGame('probable')">\
+                <span>\uc0\u55358 \u56596 </span>Probable\
+            </button>\
+        </div>\
+        <p style="margin-top:30px; opacity:0.5; font-size:0.8rem;">Hecho para divertirse</p>\
+    </div>\
+\
+    <div id="game-screen" class="screen hide">\
+        <div class="game-header">\
+            <button class="back-btn" onclick="goBack()">\uc0\u8592  Salir</button>\
+        </div>\
+\
+        <div class="card-container">\
+            <div class="card" id="card">\
+                <div class="card-category" id="cat-label">CATEGOR\'cdA</div>\
+                <div class="card-text" id="card-content">\
+                    Presiona Siguiente\
+                </div>\
+            </div>\
+        </div>\
+\
+        <button class="next-btn" onclick="nextCard()">Siguiente \uc0\u8635 </button>\
+    </div>\
+\
+    <script>\
+        /* --- L\'d3GICA DEL JUEGO (JAVASCRIPT) --- */\
+\
+        // 1. BASE DE DATOS DE PREGUNTAS\
+        const data = \{\
+            senala: [\
+                "Yo nunca he fingido estar enfermo para faltar al trabajo.",\
+                "Yo nunca he stalkeado a mi ex.",\
+                "Yo nunca he salido de fiesta dos d\'edas seguidos.",\
+                "Yo nunca he robado algo de un hotel.",\
+                "Yo nunca he besado a alguien en este cuarto.",\
+                "Yo nunca he enviado un mensaje borracho del que me arrepent\'ed."\
+            ],\
+            rapido: [\
+                "Nombra 5 marcas de cerveza.",\
+                "Nombra 5 pel\'edculas de Disney.",\
+                "Nombra 5 cosas que encontrar\'edas en un ba\'f1o.",\
+                "Nombra 5 capitales de Europa.",\
+                "Nombra 5 ingredientes de una pizza.",\
+                "Nombra 5 canciones de Reggaet\'f3n."\
+            ],\
+            elige: [\
+                \{ a: "Ser invisible", b: "Poder volar" \},\
+                \{ a: "Tener dinero infinito", b: "Tener amor verdadero" \},\
+                \{ a: "No volver a usar internet", b: "No volver a salir de casa" \},\
+                \{ a: "Saber cu\'e1ndo morir\'e1s", b: "Saber c\'f3mo morir\'e1s" \},\
+                \{ a: "Pizza con pi\'f1a", b: "Pizza sin queso" \}\
+            ],\
+            probable: [\
+                "\'bfQui\'e9n es m\'e1s probable que termine en la c\'e1rcel?",\
+                "\'bfQui\'e9n es m\'e1s probable que se vuelva millonario?",\
+                "\'bfQui\'e9n es m\'e1s probable que llore en una pel\'edcula?",\
+                "\'bfQui\'e9n es m\'e1s probable que sobreviva a un apocalipsis zombie?",\
+                "\'bfQui\'e9n es m\'e1s probable que se case primero?",\
+                "\'bfQui\'e9n es m\'e1s probable que pierda el celular en la fiesta?"\
+            ]\
+        \};\
+\
+        // Variables de estado\
+        let currentMode = '';\
+        const menuScreen = document.getElementById('menu-screen');\
+        const gameScreen = document.getElementById('game-screen');\
+        const cardContent = document.getElementById('card-content');\
+        const catLabel = document.getElementById('cat-label');\
+        const cardBox = document.getElementById('card');\
+\
+        // Funci\'f3n para iniciar juego\
+        function startGame(mode) \{\
+            currentMode = mode;\
+            \
+            // Configurar colores seg\'fan el modo\
+            let color = '';\
+            let label = '';\
+            if(mode === 'senala') \{ color = 'var(--cat1)'; label = 'Se\'f1ala con el dedo'; \}\
+            if(mode === 'rapido') \{ color = 'var(--cat2)'; label = 'El R\'e1pido (5 Cosas)'; \}\
+            if(mode === 'elige') \{ color = 'var(--cat3)'; label = '\'bfQu\'e9 prefieres?'; \}\
+            if(mode === 'probable') \{ color = 'var(--cat4)'; label = 'M\'e1s Probable'; \}\
+\
+            cardBox.style.borderTop = `5px solid $\{color\}`;\
+            catLabel.innerText = label;\
+            catLabel.style.color = color;\
+\
+            // Animaci\'f3n de cambio de pantalla\
+            menuScreen.classList.remove('active');\
+            menuScreen.classList.add('hide');\
+            gameScreen.classList.remove('hide');\
+            gameScreen.classList.add('active');\
+\
+            // Cargar primera carta\
+            nextCard();\
+        \}\
+\
+        // Funci\'f3n para volver al men\'fa\
+        function goBack() \{\
+            gameScreen.classList.remove('active');\
+            gameScreen.classList.add('hide');\
+            menuScreen.classList.remove('hide');\
+            menuScreen.classList.add('active');\
+        \}\
+\
+        // Funci\'f3n para mostrar siguiente carta\
+        function nextCard() \{\
+            // Efecto visual simple\
+            cardBox.style.transform = "scale(0.95)";\
+            setTimeout(() => cardBox.style.transform = "scale(1)", 100);\
+\
+            const list = data[currentMode];\
+            const randomIndex = Math.floor(Math.random() * list.length);\
+            const item = list[randomIndex];\
+\
+            if (currentMode === 'elige') \{\
+                // Formato especial para "Elige"\
+                cardContent.innerHTML = `\
+                    <span class="option-a">$\{item.a\}</span>\
+                    <div class="vs">O</div>\
+                    <span class="option-b">$\{item.b\}</span>\
+                `;\
+            \} else \{\
+                // Formato normal para los dem\'e1s\
+                cardContent.innerText = item;\
+            \}\
+        \}\
+    </script>\
+</body>\
+</html>}
