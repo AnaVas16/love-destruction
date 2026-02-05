@@ -128,6 +128,221 @@
 
         .back-btn {
             background: transparent;
-            border
+            border: none;
+            font-weight: 900;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .category-tag {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 50px;
+            text-transform: uppercase;
+        }
+
+        .card-container {
+            width: 85%;
+            max-width: 400px;
+            perspective: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card {
+            background: var(--white);
+            border: 3px solid var(--primary);
+            width: 100%;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 15px 15px 0px rgba(0, 51, 255, 0.2);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .card-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 51, 255, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .next-btn:active { transform: scale(0.95); }
+
+        /* Contador para EL RAPIDO */
+        #timer {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-top: 20px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="menu-screen" class="screen active">
+        <div class="brand-box">
+            <h1>Love &<br>Destruction</h1>
+            <div class="subtitle">Party Game</div>
+        </div>
+
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="startGame('juicio')">
+                EL JUICIO <span class="icon">⚖️</span>
+            </button>
+            <button class="menu-btn" onclick="startGame('victima')">
+                LA VÍCTIMA <span class="icon">👉</span>
+            </button>
+            <button class="menu-btn" onclick="startGame('detonacion')">
+                EL RÁPIDO <span class="icon">⏱️</span>
+            </button>
+            <button class="menu-btn" onclick="startGame('dilema')">
+                DILEMA <span class="icon">💔</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen hide">
+        <div class="game-header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div id="cat-display" class="category-tag">CATEGORÍA</div>
+        </div>
+
+        <div class="card-container">
+            <div class="card" id="main-card">
+                <div id="card-content" class="card-text">Listo...</div>
+                <div id="timer">20</div>
+            </div>
+
+            <button class="next-btn" id="action-btn" onclick="nextCard()">SIGUIENTE</button>
+        </div>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS COMPLETA ---
+        const db = {
+            juicio: [
+                "Yo nunca nunca me he perdido en un centro comercial.", "Yo nunca nunca he comido pizza con piña.", "Yo nunca nunca he llorado con una película de Disney.", "Yo nunca nunca he fingido una llamada para evitar a alguien.", "Yo nunca nunca he buscado mi nombre en Google.", "Yo nunca nunca he saludado a un extraño pensando que era un conocido.", "Yo nunca nunca he intentado abrir una puerta tirando cuando ponía 'empuje'.", "Yo nunca nunca me he caído en público.", "Yo nunca nunca he pasado más de dos días sin bañarme.", "Yo nunca nunca he mentido sobre mi edad.", "Yo nunca nunca he tenido un amigo imaginario.", "Yo nunca nunca he roto un hueso.", "Yo nunca nunca me he quedado dormido en clase o en el trabajo.", "Yo nunca nunca he robado un dulce cuando era niño.", "Yo nunca nunca he tenido un cambio de look del que me arrepienta.", "Yo nunca nunca he cantado en la ducha.", "Yo nunca nunca he usado el cepillo de dientes de otra persona.", "Yo nunca nunca he tenido miedo a la oscuridad.", "Yo nunca nunca he hablado solo frente al espejo.", "Yo nunca nunca he ganado un sorteo o rifa.", "Yo nunca nunca he comido algo que se cayó al suelo (regla de los 5 segundos).", "Yo nunca nunca he olvidado el cumpleaños de mi mejor amigo.", "Yo nunca nunca he hecho 'match' con alguien por error.", "Yo nunca nunca he mentido en este juego.", "Yo nunca nunca he visto una serie entera en un solo día.", "Yo nunca nunca he enviado un mensaje al grupo equivocado.", "Yo nunca nunca he dado 'like' por error a una foto vieja de mi ex.", "Yo nunca nunca he dejado en 'visto' a alguien a propósito.", "Yo nunca nunca he stalkeado a alguien que acabo de conocer.", "Yo nunca nunca he borrado una foto porque tenía pocos likes.", "Yo nunca nunca he usado una cuenta de streaming que no es mía.", "Yo nunca nunca he silenciado el grupo de la familia.", "Yo nunca nunca he mentido para salir de un plan de última hora.", "Yo nunca nunca he fingido que me gusta un regalo que odié.", "Yo nunca nunca he llegado tarde a una cita importante.", "Yo nunca nunca he bloqueado a alguien por una tontería.", "Yo nunca nunca he enviado un audio de más de 5 minutos.", "Yo nunca nunca he usado un filtro que me cambió la cara por completo.", "Yo nunca nunca he buscado síntomas en internet y pensado que iba a morir.", "Yo nunca nunca he fingido saber de un tema para no quedar mal.", "Yo nunca nunca he hecho un TikTok y luego me dio vergüenza.", "Yo nunca nunca he gastado dinero que no tenía en algo innecesario.", "Yo nunca nunca he salido de casa sin ropa interior.", "Yo nunca nunca he tenido una cita a ciegas.", "Yo nunca nunca he usado una app de citas.", "Yo nunca nunca he llorado en el transporte público.", "Yo nunca nunca he dicho 'ya voy saliendo' cuando seguía en la cama.", "Yo nunca nunca he olvidado el nombre de alguien justo después de que me lo dijeran.", "Yo nunca nunca he hecho una compra online estando borracho/a.", "Yo nunca nunca he espiado el móvil de otra persona.", "Yo nunca nunca he vomitado en un taxi.", "Yo nunca nunca me he despertado sin saber dónde estaba.", "Yo nunca nunca he mezclado tres tipos de alcohol diferentes.", "Yo nunca nunca he bailado encima de una mesa.", "Yo nunca nunca he besado a alguien de esta habitación.", "Yo nunca nunca he llamado a un ex estando de fiesta.", "Yo nunca nunca he sido expulsado de un bar o discoteca.", "Yo nunca nunca he bebido directamente de la botella en el supermercado.", "Yo nunca nunca he hecho un 'simpa' (irme sin pagar).", "Yo nunca nunca me he colado en una fiesta privada.", "Yo nunca nunca he jugado al 'Yo nunca nunca' para besar a alguien.", "Yo nunca nunca he mentido a mis padres sobre dónde estaba.", "Yo nunca nunca he tenido una laguna mental por beber.", "Yo nunca nunca he roto algo en casa ajena y no he dicho nada.", "Yo nunca nunca me he sentido atraído por el hermano/a de un amigo/a.", "Yo nunca nunca he nadado desnudo/a.", "Yo nunca nunca he dado un nombre falso en una fiesta.", "Yo nunca nunca me he peleado físicamente con alguien.", "Yo nunca nunca he besado a dos personas diferentes el mismo día.", "Yo nunca nunca he enviado un mensaje 'picante' a la persona equivocada.", "Yo nunca nunca he hecho algo de lo que me arrepienta profundamente al día siguiente.", "Yo nunca nunca he besado a alguien solo para poner celoso a otro.", "Yo nunca nunca me he enamorado de un profesor/a.", "Yo nunca nunca he tenido una aventura de una noche.", "Yo nunca nunca he mentido en el currículum.", "Yo nunca nunca he creído que los aliens ya están entre nosotros.", "Yo nunca nunca he pasado por una puerta automática y fingido que uso la fuerza.", "Yo nunca nunca he intentado mover objetos con la mente.", "Yo nunca nunca he comido comida para mascotas por curiosidad.", "Yo nunca nunca he tenido una experiencia paranormal.", "Yo nunca nunca he hablado con una planta.", "Yo nunca nunca he buscado mi casa en Google Maps.", "Yo nunca nunca he pasado un día entero en pijama.", "Yo nunca nunca he gritado el nombre de un ex en el momento equivocado.", "Yo nunca nunca he fingido ser extranjero para que no me molesten.", "Yo nunca nunca he robado un cartel de la calle.", "Yo nunca nunca he tenido un club de fans.", "Yo nunca nunca he comido algo del refrigerador de la oficina que no era mío.", "Yo nunca nunca he hecho un baile de Fortnite en público.", "Yo nunca nunca he llorado por una celebridad.", "Yo nunca nunca he intentado lamer mi propio codo.", "Yo nunca nunca he tenido un sueño erótico con alguien que me cae mal.", "Yo nunca nunca he olido mi ropa sucia para ver si podía usarla otra vez.", "Yo nunca nunca he asustado a alguien a propósito y me he sentido mal.", "Yo nunca nunca he dicho 'te amo' por error.", "Yo nunca nunca me he reído tanto que se me salió la bebida por la nariz.", "Yo nunca nunca he practicado una discusión en la ducha.", "Yo nunca nunca he caminado hacia una habitación y olvidado a qué iba.", "Yo nunca nunca he escondido comida para no compartirla.", "Yo nunca nunca he terminado esta lista sin sentirme identificado con algo.", "Yo nunca nunca he orinado en una piscina pública sabiendo que había gente dentro."
+            ],
+            victima: [
+                "¿Quién es más probable que se emborrache primero?", "¿Quién es más probable que termine bailando encima de una mesa?", "¿Quién es más probable que pierda su celular o billetera en una salida?", "¿Quién es más probable que se haga amigo de un desconocido en el baño?", "¿Quién es más probable que llame a su ex estando borracho/a?", "¿Quién es más probable que vomite en el Uber?", "¿Quién es más probable que se vaya de la fiesta sin despedirse?", "¿Quién es más probable que convenza a todos de tomar un shot más?", "¿Quién es más probable que termine durmiendo en la calle o en la playa?", "¿Quién es más probable que sea echado del bar por los guardias?", "¿Quién es más probable que organice la mejor fiesta del año?", "¿Quién es más probable que termine desnudo/a en una fiesta?", "¿Quién es más probable que se quede dormido en medio de la fiesta?", "¿Quién es más probable que pierda la dignidad por una canción de reguetón?", "¿Quién es más probable que amanezca en otra ciudad sin saber cómo llegó?", "¿Quién es más probable que se ligue al barman/barwoman para conseguir tragos gratis?", "¿Quién es más probable que rompa algo en casa ajena?", "¿Quién es más probable que sea el conductor designado y termine bebiendo igual?", "¿Quién es más probable que termine peleando con alguien?", "¿Quién es más probable que aparezca en las noticias por un escándalo público?", "¿Quién es más probable que se case primero?", "¿Quién es más probable que tenga una aventura de una noche?", "¿Quién es más probable que vuelva con su ex tóxico/a mañana mismo?", "¿Quién es más probable que tenga hijos primero?", "¿Quién es más probable que se enamore de alguien que acaba de conocer en el metro?", "¿Quién es más probable que use Tinder o Bumble religiosamente?", "¿Quién es más probable que perdone una infidelidad?", "¿Quién es más probable que tenga una familia secreta?", "¿Quién es más probable que se case por dinero?", "¿Quién es más probable que arruine una boda ajena?", "¿Quién es más probable que se enamore del hermano/a de un amigo?", "¿Quién es más probable que tenga un 'sugar daddy' o 'sugar mommy'?", "¿Quién es más probable que revise el celular de su pareja?", "¿Quién es más probable que bese a dos personas en la misma noche?", "¿Quién es más probable que termine soltero/a para siempre y viva con 10 gatos?", "¿Quién es más probable que se enamore de un personaje de ficción?", "¿Quién es más probable que llore viendo una comedia romántica?", "¿Quién es más probable que tenga un fetiche extraño?", "¿Quién es más probable que se case en Las Vegas estando borracho/a?", "¿Quién es más probable que mienta en su perfil de citas?", "¿Quién es más probable que muera primero en una película de terror?", "¿Quién es más probable que sobreviva a un apocalipsis zombie?", "¿Quién es más probable que se una a una secta accidentalmente?", "¿Quién es más probable que sea abducido por aliens (y le guste)?", "¿Quién es más probable que gane 'Los Juegos del Hambre'?", "¿Quién es más probable que termine en la cárcel por un malentendido?", "¿Quién es más probable que viva en una camioneta viajando por el mundo?", "¿Quién es más probable que finja su propia muerte para escapar de las deudas?", "¿Quién es más probable que se convierta en un meme viral?", "¿Quién es más probable que grite si ve una cucaracha o una araña?", "¿Quién es más probable que se rompa un hueso caminando por terreno plano?", "¿Quién es más probable que se pierda usando Google Maps?", "¿Quién es más probable que termine viviendo en el bosque como un ermitaño?", "¿Quién es más probable que compre algo inútil en la teletienda a las 3 AM?", "¿Quién es más probable que crea en conspiraciones locas?", "¿Quién es más probable que tenga superpoderes y no nos haya dicho?", "¿Quién es más probable que sea un espía secreto?", "¿Quién es más probable que gane una pelea callejera?", "¿Quién es más probable que se coma algo caducado sin darse cuenta?", "¿Quién es más probable que incendie la cocina intentando hervir agua?", "¿Quién es más probable que se haga millonario antes de los 40?", "¿Quién es más probable que gaste todo su sueldo el primer día?", "¿Quién es más probable que termine siendo presidente del país?", "¿Quién es más probable que renuncie a su trabajo haciendo un escándalo?", "¿Quién es más probable que se haga famoso en TikTok o YouTube?", "¿Quién es más probable que llegue tarde a su propia boda o funeral?", "¿Quién es más probable que nunca devuelva el dinero que pidió prestado?", "¿Quién es más probable que trabaje para la mafia?", "¿Quién es más probable que se gane la lotería y pierda el boleto?", "¿Quién es más probable que invente algo inútil pero se haga rico?", "¿Quién es más probable que viva con sus padres hasta los 40?", "¿Quién es más probable que tenga una cuenta de OnlyFans?", "¿Quién es más probable que estafe a alguien en un esquema piramidal?", "¿Quién es más probable que olvide ir a trabajar?", "¿Quién es más probable que se mude a otro país sin avisar a nadie?", "¿Quién es más probable que sea despedido en su primera semana?", "¿Quién es más probable que escriba un libro sobre su vida?", "¿Quién es más probable que gane un Premio Nobel?", "¿Quién es más probable que sea arrestado por evasión de impuestos?", "¿Quién es más probable que pida comida a domicilio todos los días?", "¿Quién es más probable que se ría en el momento más inapropiado?", "¿Quién es más probable que hable solo en público?", "¿Quién es más probable que tenga la risa más ruidosa?", "¿Quién es más probable que se ofenda por una broma tonta?", "¿Quién es más probable que mienta para parecer interesante?", "¿Quién es más probable que olvide el cumpleaños de su mejor amigo?", "¿Quién es más probable que se haga una cirugía plástica y lo niegue?", "¿Quién es más probable que se tatúe algo de lo que se arrepienta?", "¿Quién es más probable que llore si se le cae el helado?", "¿Quién es más probable que hable con su mascota como si fuera una persona?", "¿Quién es más probable que pase una semana sin bañarse?", "¿Quién es más probable que sea dramático/a por una gripe pequeña?", "¿Quién es más probable que borre sus redes sociales por un 'detox' y vuelva al día siguiente?", "¿Quién es más probable que lleve un outfit ridículo a una fiesta elegante?", "¿Quién es más probable que haga trampa en este juego?", "¿Quién es más probable que tenga miedo a la oscuridad?", "¿Quién es más probable que guarde un secreto hasta la tumba?", "¿Quién es más probable que cuente un secreto a los 5 minutos de saberlo?", "¿Quién es más probable que tenga conversaciones profundas a las 4 AM?", "¿Quién es más probable que se enoje por ser señalado en estas preguntas?"
+            ],
+            detonacion: [
+                "5 útiles escolares.", "5 excusas para no ir a trabajar/estudiar.", "5 materias (asignaturas) que odiabas.", "5 cosas que hay en una oficina.", "5 profesiones que pagan bien.", "5 insultos 'educados'.", "5 cosas que haces en el recreo o descanso.", "5 tipos de jefes.", "5 palabras que suenan inteligentes.", "5 formas de copiar en un examen.", "5 equipos de fútbol internacionales.", "5 deportes que se juegan con pelota.", "5 marcas de tenis (zapatillas).", "5 posiciones del fútbol.", "5 jugadores de fútbol famosos.", "5 cosas que haces en el gimnasio.", "5 juegos de mesa.", "5 pasatiempos para un domingo.", "5 videojuegos populares.", "5 nombres de estadios.", "5 cosas que hay debajo de tu cama.", "5 marcas de ropa interior.", "5 cosas que llevas en la mochila o bolso.", "5 tareas del hogar que odias hacer.", "5 cosas que hay en el refrigerador ahora mismo.", "5 marcas de champú.", "5 cosas que haces al despertar.", "5 colores de ropa que tienes en el armario.", "5 cosas que compras en una farmacia.", "5 objetos que siempre se pierden en casa.", "5 apodos cariñosos para tu pareja.", "5 lugares para una primera cita.", "5 cosas que odias de un/a ex.", "5 piropos (cumplidos) para ligar.", "5 mentiras que dicen los hombres.", "5 mentiras que dicen las mujeres.", "5 aplicaciones de citas (Tinder, etc.).", "5 cosas que te atraen de alguien.", "5 razones para terminar una relación.", "5 canciones para dedicar.", "5 películas de Disney.", "5 superhéroes de Marvel.", "5 cantantes de reggaetón.", "5 series de Netflix.", "5 actores de Hollywood que sean guapos/as.", "5 géneros musicales.", "5 villanos de películas.", "5 canciones que te ponen triste.", "5 programas de televisión infantiles.", "5 películas de terror.", "5 nombres de anime", "5 aplicaciones que usas todos los días.", "5 excusas para no contestar un WhatsApp.", "5 cosas que tienes en tu galería de fotos.", "5 filtros de Instagram o TikTok.", "5 marcas de celulares.", "5 cosas que buscas en Google cuando estás aburrido.", "5 emojis que más usas.", "5 redes sociales que ya nadie usa.", "5 influencers o YouTubers famosos.", "5 cosas que haces antes de dormir con el celular.", "5 marcas de papitas (frituras).", "5 ingredientes que lleva una hamburguesa completa.", "5 tipos de pizza.", "5 marcas de refresco (gaseosa).", "5 sabores de helado.", "5 frutas que son ácidas.", "5 cosas que le pones a un taco.", "5 marcas de comida rápida.", "5 tipos de queso.", "5 dulces o chocolates famosos.", "5 marcas de cerveza.", "5 tipos de alcohol blanco.", "5 cosas que haces cuando tienes resaca.", "5 cocteles clásicos.", "5 lugares donde esconder alcohol.", "5 botanas/snacks salados para acompañar la bebida.", "5 canciones que todo borracho canta.", "5 marcas de tequila o mezcal.", "5 cosas que pierdes en una discoteca.", "5 tipos de shots.", "5 películas de Pixar.", "5 personajes de Los Simpson.", "5 actores que hayan interpretado al Joker o a Batman.", "5 películas de terror que tengan más de 3 partes.", "5 series que terminaron con un final decepcionante.", "5 películas donde el protagonista muere al final.", "5 personajes de Harry Potter.", "5 películas dirigidas por Steven Spielberg o Quentin Tarantino.", "5 series de comedia (Sitcoms).", "5 películas de ciencia ficción en el espacio.", "5 personajes de Star Wars.", "5 películas animadas que NO sean de Disney.", "5 actores que se llamen 'Chris'.", "5 películas basadas en hechos reales.", "5 series de crímenes o asesinos seriales.", "5 bandas de Rock legendarias.", "5 canciones de reggaetón 'viejito' (clásicos).", "5 instrumentos que se usan en una banda de rock.", "5 cantantes que solo necesitan un nombre.", "5 canciones de Taylor Swift o Bad Bunny.", "5 festivales de música famosos en el mundo.", "5 canciones que todo el mundo se sabe de memoria.", "5 bandas que se separaron y rompieron corazones.", "5 géneros musicales que te pongan a bailar.", "5 videoclips icónicos de la historia.", "5 personajes de Nintendo.", "5 videojuegos de disparos (Shooters).", "5 consolas de videojuegos antiguas.", "5 personajes de League of Legends o Free Fire.", "5 videojuegos que tengan película.", "5 enemigos clásicos de Mario Bros.", "5 juegos que puedes jugar en el celular.", "5 plataformas para ver directos (Streamings).", "5 superpoderes típicos de los videojuegos.", "5 juegos de mundo abierto."
+            ],
+            dilema: [
+                "¿Tener una nariz de 20 cm o una lengua de 20 cm?", "¿Dormir en una cama de clavos o en una cama llena de serpientes (no venenosas)?", "¿Beber un licuado de hamburguesa o uno de sushi?", "¿Tener que gritar cada vez que hablas o susurrar siempre?", "¿Tener tres brazos o tres piernas?", "¿Ser un fantasma que puede observar pero no tocar o un zombie que puede tocar pero no sentir?", "¿Vivir en un mundo donde todos cantan como en un musical o donde todos hablan como en una película de acción?", "¿Tener el sentido del gusto en los pies o el sentido del olfato en las manos?", "¿Tener que usar ropa mojada todo el día o zapatos que te quedan chicos?", "¿Ser el primero en morir en una película de terror o el único sobreviviente que queda traumado?", "¿Ganar una medalla de oro olímpica o un Oscar?", "¿Ser el peor jugador en el equipo que gana o el mejor en el equipo que pierde?", "¿Jugar fútbol con zapatos de payaso o baloncesto con una pelota de boliche?", "¿Correr un maratón o pelear contra un canguro?", "¿Tener la habilidad de Messi en el fútbol o de Jordan en el basket?", "¿Nunca poder ver deportes en vivo o nunca poder jugar ningún deporte?", "¿Escalar el Everest o nadar por el Canal de la Mancha?", "¿Ser un atleta profesional que se retira joven por lesión o uno mediocre que juega hasta los 45?", "¿Ganar el Super Bowl o la final del Mundial de Fútbol?", "¿Entrenar todos los días a las 5 AM o a las 11 PM?", "¿Vivir 100 años con salud media o 50 años siendo un atleta de élite?", "¿Tener siempre frío o siempre calor?", "¿Ser un genio en un mundo de tontos o un tonto en un mundo de genios?", "¿Tener un botón de 'pausa' para tu vida o uno de 'rebobinar'?", "¿Olvidar quién eres tú o que todos olviden quién eres tú?", "¿Poder cambiar tu pasado o ver tu futuro?", "¿Ser famoso por algo horrible o ser un completo desconocido por algo heroico?", "¿Tener una piel azul brillante o tener pelo por todo el cuerpo como un oso?", "¿Tener que decir siempre la verdad o tener que mentir siempre?", "¿Vivir en una simulación perfecta o en la cruda realidad?", "¿Casarte con alguien que no amas pero que te trata increíble o con alguien que amas pero que te trata regular?", "¿Saber cuándo vas a morir o de qué vas a morir?", "¿Tener 100 conocidos o 2 amigos de verdad?", "¿Estar atrapado en un elevador con tu ex o con tu suegra?", "¿Que tu pareja sea súper inteligente pero aburrida o súper divertida pero tonta?", "¿Vivir el resto de tu vida solo o rodeado de gente que no te cae bien?", "¿Tener un corazón roto una vez pero encontrar el amor verdadero o nunca tener el corazón roto pero nunca amar de verdad?", "¿Perdonar una infidelidad o que te perdonen una a ti?", "¿Poder leer los mensajes de todo el mundo o que nadie pueda leer los tuyos?", "¿Ser plantado en el altar o que tu pareja te deje por tu mejor amigo?", "¿Ganar la lotería hoy o tener el trabajo de tus sueños con un sueldo normal?", "¿Trabajar 4 días a la semana por 10 horas o 5 días por 8 horas?", "¿Ser el jefe de una empresa pequeña o un empleado raso en una multinacional gigante?", "¿Encontrar $10,000 dólares en la calle o que tu mejor amigo gane $100,000?", "¿Poder comprar cualquier cosa pero no poder poseer nada (todo rentado) o poseer poco pero que sea tuyo para siempre?", "¿Tener mucho dinero pero no tener tiempo para gastarlo o tener mucho tiempo pero estar quebrado?", "¿Trabajar desde casa para siempre o nunca volver a trabajar desde casa?", "¿Ser un artista famoso pero incomprendido o un contable rico y aburrido?", "¿Retirarte a los 40 años con lo justo o a los 65 con lujos?", "¿Tener un trabajo que odias pero que ayuda a la gente o uno que amas pero que no sirve para nada?", "¿Tener hipo para siempre o sentir que siempre tienes ganas de estornudar?", "¿Que siempre se te quede comida en los dientes o que siempre tengas la bragueta abierta?", "¿Cantar todo lo que dices o bailar cada vez que caminas?", "¿Tener que usar ropa de payaso al trabajo o ir siempre en pijama?", "¿Oler a cebolla siempre o que todo te huela a cebolla a ti?", "¿Tener las manos siempre pegajosas o los pies siempre mojados?", "¿Llamar a tu jefe 'mamá' por accidente o llamar a tu ex por error?", "¿Tener una risa extremadamente ruidosa o un estornudo que suene como un grito?", "¿Llevar calcetines con sandalias o usar ropa dos tallas más pequeña?", "¿Que se te escape un gas en un elevador lleno o en una primera cita?", "¿Viajar al futuro 100 años o al pasado 100 años?", "¿Vivir siempre en la playa o siempre en la montaña?", "¿Un viaje todo pagado a Japón o a Islandia?", "¿Vivir en una ciudad que nunca duerme o en un pueblo tranquilo?", "¿Viajar siempre en primera clase pero solo a países vecinos o en clase turista a cualquier lugar del mundo?", "¿Ir al espacio o al fondo del océano?", "¿Volar en un avión privado o tener un yate de lujo?", "¿Perderte en el desierto o en la selva?", "¿Vacaciones extremas (paracaidismo, etc.) o vacaciones de relax total?", "¿Vivir en una mansión solo o en una casa pequeña con tus mejores amigos?", "¿Ser un influencer famoso pero pobre o un millonario anónimo?", "¿Vivir sin música o vivir sin televisión?", "¿Solo poder usar computadoras de los años 90 o solo teléfonos fijos?", "¿Perder todos tus contactos o perder todas tus fotos?", "¿Que todos vean tu historial de búsqueda o que todos vean tus fotos de la galería?", "¿Tener el celular siempre al 1% de batería o no tener señal nunca?", "¿Vivir sin internet o vivir sin bañarte por un mes?", "¿Volar o ser invisible?", "¿Leer mentes o ver el futuro?", "¿Teletransportarte o viajar en el tiempo?", "¿Hablar con los animales o hablar todos los idiomas del mundo?", "¿Ser un superhéroe que nadie conoce o un villano amado por todos?", "¿Tener una fuerza sobrehumana o una inteligencia infinita?", "¿Poder respirar bajo el agua o ser inmune al fuego?", "¿Controlar el clima o controlar el tiempo (pausa/adelante)?", "¿Vivir en el universo de Star Wars o en el de Harry Potter?", "¿Tener un dragón de mascota o un unicornio?", "¿Pizza con piña o pizza con anchoas?", "¿No volver a comer chocolate o no volver a comer papitas fritas?", "¿Comer todo con mucha sal o todo con mucho picante?", "¿Cerveza tibia o café frío?", "¿Cocinar para 20 personas o lavar todos los platos tú solo?", "¿Comer solo comida rápida o solo comida orgánica por un año?", "¿Tener un chef privado o un masajista personal?", "¿Beber solo agua o solo jugo por el resto de tu vida?", "¿Comer algo que se cayó al suelo o algo que ya caducó hace un día?", "¿No poder usar cubiertos o tener que usar palillos chinos para todo?", "¿Que se te rompa el pantalón en el gimnasio o que se te caiga la peluca/extensión en una cita?", "¿Saludar a un extraño pensando que es tu amigo o que un extraño te abrace pensando que eres otra persona?", "¿Tener un pedazo de lechuga en el diente toda una fiesta o un moco colgando durante una entrevista?", "¿Caminar con papel higiénico pegado al zapato o con la etiqueta del precio colgando de la ropa?", "¿Tener que cantar el himno nacional solo frente a mil personas o bailar 'Baby Shark' en una boda elegante?", "¿Equivocarte de baño y entrar al del género opuesto o entrar a una reunión que no es la tuya?", "¿Que se te escape un gas ruidoso en un examen en silencio o un gas oloroso en un elevador lleno?", "¿Caerte por las escaleras en el centro comercial o chocar contra una puerta de vidrio limpia?", "¿Que te suene la tripa (estómago) muy fuerte en una cita romántica o bostezar ruidosamente mientras alguien te cuenta algo triste?", "¿Tener hipo durante 24 horas o tener ganas de estornudar y que no te salga?", "¿Mandar un audio criticando a alguien a la persona de la que estás hablando o mandar un 'nude' al grupo de la familia?", "¿Que se te escape un 'like' en una foto de hace 3 años de tu ex o comentar 'qué guapo/a' en la foto de tu jefe por error?", "¿Estar compartiendo pantalla y que te llegue un mensaje muy privado o que se te prenda la cámara cuando estás en el baño en un Zoom?", "¿Tener mal aliento y que nadie te diga o tener un mal olor corporal y que todos se alejen?", "¿Que te canten el 'Feliz Cumpleaños' y no saber qué hacer con las manos o que te aplaudan por algo que no hiciste?", "¿Llegar a una fiesta de disfraces donde nadie fue disfrazado o ser el único que no fue disfrazado cuando era obligatorio?", "¿Olvidar el nombre de alguien justo cuando lo vas a presentar o presentar a alguien con el nombre equivocado?", "¿Felicitar a alguien por su embarazo cuando no está embarazada o preguntarle a alguien por su pareja y que acaben de terminar?", "¿Tener una cita con alguien que habla demasiado o con alguien que no dice ni una palabra?", "¿Manchar la camisa blanca de alguien con vino tinto o que alguien te manche a ti con salsa de tomate?", "¿Reírte tanto que se te salga la leche/bebida por la nariz o que se te salga un diente postizo?", "¿Escuchar a alguien hablando mal de ti sin que sepa que estás ahí o que alguien te pille hablando mal de él?", "¿Tener que dar un discurso sin haberte preparado nada o tener que bailar frente a profesionales?"
+            ]
+        };
+
+        // --- LÓGICA DEL JUEGO ---
+        let currentList = [];
+        let currentMode = '';
+        let timerInterval;
+
+        const menuScreen = document.getElementById('menu-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const cardContent = document.getElementById('card-content');
+        const catDisplay = document.getElementById('cat-display');
+        const actionBtn = document.getElementById('action-btn');
+        const timerDisplay = document.getElementById('timer');
+        const mainCard = document.getElementById('main-card');
+
+        function startGame(mode) {
+            currentMode = mode;
+            currentList = [...db[mode]]; // Copia fresca
+            
+            // Configurar textos
+            let title = "";
+            if(mode === 'juicio') title = "EL JUICIO";
+            if(mode === 'victima') title = "LA VÍCTIMA";
+            if(mode === 'detonacion') title = "EL RÁPIDO";
+            if(mode === 'dilema') title = "DILEMA";
+            
+            catDisplay.innerText = title;
+
+            // Animación cambio pantalla
+            menuScreen.classList.remove('active');
+            menuScreen.classList.add('screen-left');
+            gameScreen.classList.remove('hide');
+            gameScreen.classList.add('active');
+
+            nextCard();
+        }
+
+        function goBack() {
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+            gameScreen.classList.remove('active');
+            gameScreen.classList.add('hide');
+            menuScreen.classList.remove('screen-left');
+            menuScreen.classList.add('active');
+        }
+
+        function nextCard() {
+            // Animación de tarjeta
+            mainCard.style.transform = "scale(0.95)";
+            setTimeout(() => mainCard.style.transform = "scale(1)", 100);
+
+            // Reiniciar timer si existe
+            clearInterval(timerInterval);
+            timerDisplay.style.display = 'none';
+            actionBtn.innerText = "SIGUIENTE";
+
+            // Elegir aleatorio
+            const randomIndex = Math.floor(Math.random() * currentList.length);
+            const item = currentList[randomIndex];
+
+            // Renderizar contenido
+            cardContent.innerText = item;
+
+            // Lógica especial EL RAPIDO (Timer)
+            if (currentMode === 'detonacion') {
+                actionBtn.innerText = "¡TIEMPO!";
+                timerDisplay.style.display = 'block';
+                let timeLeft = 20; // 20 SEGUNDOS
+                timerDisplay.innerText = timeLeft;
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.innerText = timeLeft;
+                    if(timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerDisplay.innerText = "¡BOOM!";
+                        navigator.vibrate([200, 100, 200]); // Vibrar celular
+                    }
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
           
       
